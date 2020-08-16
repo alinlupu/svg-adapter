@@ -41,7 +41,7 @@ const SVGAdapter = function() {
 	this.setViewBox = ( newViewBox, svgElement ) => {
 		let svgEl;
 		// Check for global svg element's existence
-		if( typeof _SVGEl != "undefined" ) {
+		if( _SVGEl != null ) {
 			svgEl = _SVGEl;
 		}
 		
