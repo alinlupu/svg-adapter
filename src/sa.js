@@ -17,7 +17,6 @@ const SVGAdapter = function() {
 			switch( t ) {
 				case "object":
 					// Check if element is a SVG container
-					console.log( newSVGEl );
 					_SVGEl = newSVGEl;	
 					break;
 				case "string":
@@ -25,17 +24,17 @@ const SVGAdapter = function() {
 					_SVGEl = document.getElementById( newSVGEl );
 					if( _SVGEl == null ) {
 						//TODO: Check if id has # before and remove it if it does
-						console.log( "[sa:setCurrentSVG] No element found with id: " + newSVGEl ); 
+						console.log( "[sa:setSVG] No element found with id: " + newSVGEl ); 
 						return;
 					}
 					break;
 				default:
-					console.log( "[sa:setCurrentSVG] Incorrect SVG Element paramater type!" );
+					console.log( "[sa:setSVG] Incorrect SVG Element paramater type!" );
 			}
 		} else {
-			console.log( "[sa:setCurrentSVG] SVG Element parameter is undefined!" );
+			console.log( "[sa:setSVG] SVG Element parameter is undefined!" );
 		}
-		console.log( "[sa:setCurrentSVG] SVG Element set!" );
+		console.log( "[sa:setSVG] SVG Element set!" );
 	}
 	
 	this.setViewBox = ( newViewBox, svgElement ) => {
@@ -96,7 +95,14 @@ const SVGAdapter = function() {
 	}
 	
 	const _changeViewBox_s = ( newViewBox, svgElement ) => {
-		svgElement.setAttribute( "viewBox", newViewBox );	
+		let tn = svgElement.tagName.toLowerCase();
+		console.log( svgElement );
+		if( tn == "svg" ) {
+			svgElement.setAttribute( "viewBox", newViewBox );	
+		} else if( tn == "img" ) {
+			let s = svgElement.getAttribute( "src" ).split( "#" )[0];
+			svgElement.src = s + "#svgView(viewBox(" + newViewBox + "))"; 
+		}
 	}
 
 	const _changeViewBox_o = ( newViewBox, svgElement ) => {
