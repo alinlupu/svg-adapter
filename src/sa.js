@@ -6,7 +6,7 @@ const SVGAdapter = function() {
 	let _SVGEl = null;
 
 	this.getSVG = ( ) => {
-		if( typeof _SVGEl != undefined ) {
+		if( _SVGEl != null ) {
 			return _SVGEl;	
 		}
 	}
