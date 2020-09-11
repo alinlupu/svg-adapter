@@ -37,16 +37,24 @@ const SVGAdapter = function() {
 			console.log( "[sa:setSVG] SVG Element parameter is undefined!" );
 		}
 		console.log( "[sa:setSVG] SVG Element set!" );
+		let _current_vb_str = _SVGEl.getAttribute( "viewBox" );
+		_vb = _vb_string_to_obj( _current_vb_str );
+		console.log( "[sa:setSVG] Viewbox object set: " + _current_vb_str );
+		this.setViewBoxLimits( _vb );
 	}
 
 	this.setViewBoxLimits = ( vbLimits ) => {
 		if( typeof( vbLimits ) == "object" ) { 
 			[ 'w', 'h', 'x', 'y'].forEach( ( p ) => { 
-				if( p in vbObj == false ) {
+				if( p in vbLimits == false ) {
 					console.log( "[ sa:setViewBoxLimits ] Incorrect vb limits parameter properties!" );
 				}
 			});
-			_vb_limits = vbLimits;
+			_vb_limits = {};
+			_vb_limits.x = vbLimits.x;
+			_vb_limits.y = vbLimits.y;
+			_vb_limits.w = vbLimits.w;
+			_vb_limits.h = vbLimits.h;
 		} else if( typeof( vbLimits ) == "string" ) {
 			_vb_limits = _vb_string_to_obj( vbLimits );
 		} else {
@@ -131,7 +139,6 @@ const SVGAdapter = function() {
 		_vb.w = 1/_scaleW * _vb.w;
 		_vb.h = 1/_scaleH * _vb.h;
 				
-
 		// Set inferior scale limit
 		let _scaleEps = 20; // TODO: set this limit through a method
 		if( _vb.w <= _scaleEps || _vb.h <= _scaleEps ) {
@@ -171,9 +178,20 @@ const SVGAdapter = function() {
 			console.log( "[ sa:translate ] Incorrect position parameter type!" );
 		}
 	
+		console.log( _vb );
 		// Change x, y, viewbox objec accordingly
 		_vb.x = _vb.x + _posX;
 		_vb.y = _vb.y + _posY;
+	
+		if( _vb.x < _vb_limits.x ) {
+			console.log( "Inferior limit reached" + _vb_limits.x );
+			_vb.x = _vb_limits.x;
+		}
+		
+		if( _vb.x > _vb_limits.x + _vb_limits.w / 2 + 20 ) {
+			console.log( "Superior limit reached" );
+			_vb.x = _vb_limits.x + _vb_limits.w / 2 + 20;
+		}
 
 		// Apply new viewbox object
 		_changeViewBox_o();
